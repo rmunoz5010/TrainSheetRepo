@@ -2,15 +2,15 @@ $(document).ready(function(){
     console.log("test");
 
     // initialize firebase
-    var config = {
-        apiKey: "AIzaSyBWAD8y60ZAaDsuwEt-SEa9Jap6kMLS-NU",
-        authDomain: "coder-bay-b12e4.firebaseapp.com",
-        databaseURL: "https://coder-bay-b12e4.firebaseio.com",
-        projectId: "coder-bay-b12e4",
-        storageBucket: "coder-bay-b12e4.appspot.com",
-        messagingSenderId: "1029478646953"
-      };
 
+    var config = {
+        apiKey: "AIzaSyD3KssKMtMzUSaUbiY2_Uu5IvSvJPt1mB4",
+        authDomain: "whenisthenexttrain.firebaseapp.com",
+        databaseURL: "https://whenisthenexttrain.firebaseio.com",
+        projectId: "whenisthenexttrain",
+        storageBucket: "",
+        messagingSenderId: "997756607175"
+    };
     firebase.initializeApp(config);
 
     // declare database var
@@ -21,7 +21,7 @@ $(document).ready(function(){
     var time = "";
     var rate = "";
 
-    $("#submitbtn").on('click', function(){
+    $("#submitbtn").on('click', function(event){
         // prevents overwriting 
         event.preventDefault();
 
@@ -46,19 +46,44 @@ $(document).ready(function(){
         database.ref().on('child_added', function(childSnapshot){
             //Log info coming out of snapshot
             // console.log(childSnapshot.val().name);
-            // console.log(childSnapshot.val().role);
-            // console.log(childSnapshot.val().date);
+            // console.log(childSnapshot.val().destination);
+            // console.log(childSnapshot.val().time);
             // console.log(childSnapshot.val().rate);
 
             // this was all gotten from the moment js website
-            var a = moment(); // this stores the current time in a variable
-            var b = moment(childSnapshot.val().date); // this stores the date from childSnapshot to a variable
-            var months = a.diff(b, 'months'); // subtracts childSnapshot from a, and calculates it in months. 
-            console.log(months);
+            // Assumptions
+            var tFrequency = childSnapshot.val().rate;
+
+            // Time is 3:30 AM
+            var firstTime = childSnapshot.val().time;
+
+            // First Time (pushed back 1 year to make sure it comes before current time)
+            var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+            console.log(firstTimeConverted);
+
+            // Current Time
+            var currentTime = moment();
+            console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
+            // Difference between the times
+            var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+            console.log("DIFFERENCE IN TIME: " + diffTime);
+
+            // Time apart (remainder)
+            var tRemainder = diffTime % tFrequency;
+            console.log(tRemainder);
+
+            // Minute Until Train
+            var tMinutesTillTrain = tFrequency - tRemainder;
+            console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+            // Next Train
+            var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+            console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
 
 
             // This acts as a for loop, so for each 'childSnapshot', we're gonna add the info below in a new table row, or <td> 
-            $("#table").append("<tr>" + "<td>" + childSnapshot.val().name + "</td>" + "<td>" + childSnapshot.val().role + "</td>" + "<td>" + childSnapshot.val().date + "<td>" + months + " months" + "</td>" + "<td>" + childSnapshot.val().rate + "</td>" + "<td>" + months * childSnapshot.val().rate + "</td>" + "</tr>");
+            $("#table").append("<tr>" + "<td>" + childSnapshot.val().name + "</td>" + "<td>" + childSnapshot.val().destination + "</td>" + "<td>" + childSnapshot.val().rate + "<td>" + moment(nextTrain).format("hh:mm") + "</td>" + "<td>" + tMinutesTillTrain + "</td>"  + "</tr>");
         }, function(errorObject){
             console.log("Errors handled: " + errorObject.code);
         })
