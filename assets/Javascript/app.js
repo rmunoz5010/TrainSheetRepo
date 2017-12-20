@@ -51,10 +51,10 @@ $(document).ready(function(){
             // console.log(childSnapshot.val().rate);
 
             // this was all gotten from the moment js website
-            // Assumptions
+            // Assign tFrequency to the snapshot value of frequency
             var tFrequency = childSnapshot.val().rate;
 
-            // Time is 3:30 AM
+            // Assign firstTime to the snapshot value of time
             var firstTime = childSnapshot.val().time;
 
             // First Time (pushed back 1 year to make sure it comes before current time)
