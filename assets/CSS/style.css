@@ -1,0 +1,13 @@
+body{
+    background-image: url("https://i.giphy.com/media/tKX6FNU9UGwF2/giphy.webp");
+    padding: 20px;
+}
+.jumbotron{
+
+    background-color:#CD5C5C;
+    color: white;
+}
+#header{
+    background-color: burlywood;
+    color:white;
+}
